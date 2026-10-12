@@ -38,6 +38,7 @@ software to foreign countries or providing access to foreign persons.
 *****************************************************************************
 """
 
+import copy
 import sys
 
 from attrs import Converter, define, field
@@ -201,7 +202,7 @@ class CustodyTransferExt(CanonicalBlock):
     @block_src_admin_eid.setter
     def block_src_admin_eid(self, value: str | list[Any]) -> None:
         if isinstance(value, list):
-            self._block_src_admin_eid = value
+            self._block_src_admin_eid = copy.deepcopy(value)
         else:
             self._block_src_admin_eid = parse_eid_string(value)
 
@@ -279,7 +280,9 @@ class CompressedReportingExt(CanonicalBlock):
     _block_src_admin_eid: list[Any] | None = field(
         default=None, converter=optional(parse_eid_string)
     )
-    _report_to_eid: list[Any] | None = field(default=None)
+    _report_to_eid: list[Any] | None = field(
+        default=None, converter=optional(parse_eid_string)
+    )
 
     report_recv = creb_flag_property(CREBFlags.RECV_REPORT_REQ)
     fwd_report = creb_flag_property(CREBFlags.FWD_REPORT_REQ)
@@ -307,7 +310,7 @@ class CompressedReportingExt(CanonicalBlock):
     @block_src_admin_eid.setter
     def block_src_admin_eid(self, value: str | list[Any]) -> None:
         if isinstance(value, list):
-            self._block_src_admin_eid = value
+            self._block_src_admin_eid = copy.deepcopy(value)
         else:
             self._block_src_admin_eid = parse_eid_string(value)
 
@@ -326,7 +329,7 @@ class CompressedReportingExt(CanonicalBlock):
     @report_to_eid.setter
     def report_to_eid(self, value: str | list[Any]) -> None:
         if isinstance(value, list):
-            self._report_to_eid = value
+            self._report_to_eid = copy.deepcopy(value)
         else:
             self._report_to_eid = parse_eid_string(value)
 

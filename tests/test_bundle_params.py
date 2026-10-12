@@ -40,6 +40,7 @@ software to foreign countries or providing access to foreign persons.
 """
 
 import datetime as dt
+from typing import Any
 
 import pytest
 from hypothesis import given
@@ -50,6 +51,7 @@ from bespokebpv7.bundle_params import (
     BaseStatusReport,
     BundleLife,
     BundleRoute,
+    CRBundleSequence,
     CreationTime,
     StatusAssertion,
 )
@@ -127,3 +129,31 @@ def test_base_status_report_structure_raises_on_short_list() -> None:
         ValueError, match="BaseStatusReport requires at least 4 elements"
     ):
         BaseStatusReport._structure(truncated_data)
+
+
+@pytest.mark.parametrize(
+    ("cls", "attr"),
+    [(BaseStatusReport, "status_src_eid"), (CRBundleSequence, "block_src_admin_eid")],
+)
+def test_eid_setter_does_not_alias_the_callers_list(cls: type, attr: str) -> None:
+    """A list given to an EID setter is copied, so later edits do not leak in."""
+    obj = cls()
+    eid: list[Any] = [2, [0, 3, 1]]
+    setattr(obj, attr, eid)
+    assert getattr(obj, attr) == "ipn:3.1"
+
+    eid[1][1] = 99  # mutate the nested list the caller still holds
+    eid.append("extra")
+    assert getattr(obj, attr) == "ipn:3.1"
+
+
+@pytest.mark.parametrize(
+    ("cls", "attr"),
+    [(BaseStatusReport, "status_src_eid"), (CRBundleSequence, "block_src_admin_eid")],
+)
+def test_eid_constructor_does_not_alias_the_callers_list(cls: type, attr: str) -> None:
+    """A list passed to the constructor is copied as well."""
+    eid: list[Any] = [2, [0, 3, 1]]
+    obj = cls(**{attr: eid})
+    eid[1][1] = 99
+    assert getattr(obj, attr) == "ipn:3.1"

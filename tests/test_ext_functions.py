@@ -39,6 +39,8 @@ software to foreign countries or providing access to foreign persons.
 *****************************************************************************
 """
 
+from typing import Any
+
 import cbor2
 import pytest
 from hypothesis import given
@@ -311,3 +313,42 @@ def test_compressed_reporting_ext_unstructure_raises_on_interior_none_gap() -> N
         ),
     ):
         bundle_converter.unstructure(creb)
+
+
+EXT_EID_ATTRS = [
+    (CustodyTransferExt, "block_src_admin_eid"),
+    (CompressedReportingExt, "block_src_admin_eid"),
+    (CompressedReportingExt, "report_to_eid"),
+]
+
+
+@pytest.mark.parametrize(("cls", "attr"), EXT_EID_ATTRS)
+def test_eid_setter_does_not_alias_the_callers_list(cls: type, attr: str) -> None:
+    """A list given to an EID setter is copied, so later edits do not leak in."""
+    block = cls()
+    eid: list[Any] = [2, [0, 3, 1]]
+    setattr(block, attr, eid)
+    assert getattr(block, attr) == "ipn:3.1"
+
+    eid[1][1] = 99  # mutate the nested list the caller still holds
+    eid.append("extra")
+    assert getattr(block, attr) == "ipn:3.1"
+
+
+@pytest.mark.parametrize(("cls", "attr"), EXT_EID_ATTRS)
+def test_eid_setter_does_not_alias_a_dtn_list(cls: type, attr: str) -> None:
+    """The same holds for a dtn EID, whose ssp is a string inside the list."""
+    block = cls()
+    eid: list[Any] = [1, "//node/service"]
+    setattr(block, attr, eid)
+    eid[1] = "//changed"
+    assert getattr(block, attr) == "dtn://node/service"
+
+
+@pytest.mark.parametrize(("cls", "attr"), EXT_EID_ATTRS)
+def test_eid_constructor_does_not_alias_the_callers_list(cls: type, attr: str) -> None:
+    """A list passed to the constructor is copied as well."""
+    eid: list[Any] = [2, [0, 3, 1]]
+    block = cls(**{attr: eid})
+    eid[1][1] = 99
+    assert getattr(block, attr) == "ipn:3.1"

@@ -284,7 +284,7 @@ class BaseStatusReport:
     @status_src_eid.setter
     def status_src_eid(self, value: str | list[Any]) -> None:
         if isinstance(value, list):
-            self._status_src_eid = value
+            self._status_src_eid = copy.deepcopy(value)
         else:
             self._status_src_eid = parse_eid_string(value)
 
@@ -354,6 +354,6 @@ class CRBundleSequence(CTBundleSequence):
     @block_src_admin_eid.setter
     def block_src_admin_eid(self, value: str | list[Any]) -> None:
         if isinstance(value, list):
-            self._block_src_admin_eid = value
+            self._block_src_admin_eid = copy.deepcopy(value)
         else:
             self._block_src_admin_eid = parse_eid_string(value)
