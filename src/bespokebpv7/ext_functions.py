@@ -38,7 +38,6 @@ software to foreign countries or providing access to foreign persons.
 *****************************************************************************
 """
 
-import copy
 import sys
 
 from attrs import Converter, define, field
@@ -112,10 +111,7 @@ class PreviousNodeExt(CanonicalBlock):
 
     @previous_node.setter
     def previous_node(self, value: str | list[Any]) -> None:
-        if isinstance(value, list):
-            self._previous_node = value
-        else:
-            self._previous_node = parse_eid_string(value)
+        self._previous_node = parse_eid_string(value)
 
     @classmethod
     def _structure(cls, data: list[Any]) -> Self:
@@ -201,10 +197,7 @@ class CustodyTransferExt(CanonicalBlock):
 
     @block_src_admin_eid.setter
     def block_src_admin_eid(self, value: str | list[Any]) -> None:
-        if isinstance(value, list):
-            self._block_src_admin_eid = copy.deepcopy(value)
-        else:
-            self._block_src_admin_eid = parse_eid_string(value)
+        self._block_src_admin_eid = parse_eid_string(value)
 
     @classmethod
     def _structure(cls, data: list[Any]) -> Self:
@@ -309,10 +302,7 @@ class CompressedReportingExt(CanonicalBlock):
 
     @block_src_admin_eid.setter
     def block_src_admin_eid(self, value: str | list[Any]) -> None:
-        if isinstance(value, list):
-            self._block_src_admin_eid = copy.deepcopy(value)
-        else:
-            self._block_src_admin_eid = parse_eid_string(value)
+        self._block_src_admin_eid = parse_eid_string(value)
 
     @property
     def report_to_eid(self) -> str | None:
@@ -328,10 +318,7 @@ class CompressedReportingExt(CanonicalBlock):
 
     @report_to_eid.setter
     def report_to_eid(self, value: str | list[Any]) -> None:
-        if isinstance(value, list):
-            self._report_to_eid = copy.deepcopy(value)
-        else:
-            self._report_to_eid = parse_eid_string(value)
+        self._report_to_eid = parse_eid_string(value)
 
     def set_status_flag(self, status_flag: CREBFlags) -> None:
         """Set an individual security context flag."""

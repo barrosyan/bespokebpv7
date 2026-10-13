@@ -39,7 +39,6 @@ software to foreign countries or providing access to foreign persons.
 *****************************************************************************
 """
 
-import copy
 import datetime as dt
 import sys
 
@@ -84,10 +83,7 @@ class BundleRoute:
 
     @source_eid.setter
     def source_eid(self, value: str | list[Any]) -> None:
-        if isinstance(value, list):
-            self._source_eid = copy.deepcopy(value)
-        else:
-            self._source_eid = parse_eid_string(value)
+        self._source_eid = parse_eid_string(value)
 
     @property
     def dest_eid(self) -> str:
@@ -96,10 +92,7 @@ class BundleRoute:
 
     @dest_eid.setter
     def dest_eid(self, value: str | list[Any]) -> None:
-        if isinstance(value, list):
-            self._dest_eid = copy.deepcopy(value)
-        else:
-            self._dest_eid = parse_eid_string(value)
+        self._dest_eid = parse_eid_string(value)
 
     @property
     def report_to(self) -> str:
@@ -108,10 +101,7 @@ class BundleRoute:
 
     @report_to.setter
     def report_to(self, value: str | list[Any]) -> None:
-        if isinstance(value, list):
-            self._report_to_eid = copy.deepcopy(value)
-        else:
-            self._report_to_eid = parse_eid_string(value)
+        self._report_to_eid = parse_eid_string(value)
 
 
 @define
@@ -283,10 +273,7 @@ class BaseStatusReport:
 
     @status_src_eid.setter
     def status_src_eid(self, value: str | list[Any]) -> None:
-        if isinstance(value, list):
-            self._status_src_eid = copy.deepcopy(value)
-        else:
-            self._status_src_eid = parse_eid_string(value)
+        self._status_src_eid = parse_eid_string(value)
 
     def _unstructure(self) -> list[Any]:
         """Convert status report to list for CBOR encoding.
@@ -353,7 +340,4 @@ class CRBundleSequence(CTBundleSequence):
 
     @block_src_admin_eid.setter
     def block_src_admin_eid(self, value: str | list[Any]) -> None:
-        if isinstance(value, list):
-            self._block_src_admin_eid = copy.deepcopy(value)
-        else:
-            self._block_src_admin_eid = parse_eid_string(value)
+        self._block_src_admin_eid = parse_eid_string(value)
