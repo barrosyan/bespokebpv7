@@ -231,7 +231,7 @@ class PrimaryBlock(BaseBlock):
     list_override: list[Any] | None = field(default=None)
     extra_elements: list[Any] = field(factory=list)
     raw_override: bytes | None = field(default=None)
-    min_array_len = 8
+    _min_array_len = 8
 
     is_fragment = flag_property(BundleFlags.IS_FRAGMENT)
     adu_is_admin = flag_property(BundleFlags.ADU_IS_ADMIN_RECORD)
@@ -265,7 +265,7 @@ class PrimaryBlock(BaseBlock):
             ValueError: If the CBOR array is too short to be a primary block.
 
         """
-        if len(data) < cls.min_array_len:
+        if len(data) < cls._min_array_len:
             msg = "Primary block CBOR array too short"
             raise ValueError(msg)
         creation = data[6]
